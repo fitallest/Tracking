@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Package, Check, Loader2, AlertCircle } from 'lucide-react';
+import { Search, Package, Check, Loader2, AlertCircle, MapPin, User, FileText, CreditCard, Truck, Clock, ArrowRight, ShieldCheck, Zap, Shield, Headphones, Ship, Warehouse } from 'lucide-react';
 
 // In a real scenario, replace this with the Google Sheets CSV publish link
 const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQkCq0jHKbkhJ5hjRU6dFAK1wqkM7JpccQaXcwZhDJSg325PYzzdPU4fYyuazxLguXCmpRC9E6rTjhf/pub?output=csv"; 
@@ -14,9 +14,10 @@ interface TrackingRecord {
   id: string;
   overallTime: string;
   overallStatus: string;
-  recipientName: string;
-  deliveryAddress: string;
-  receivingAddress: string;
+  senderName: string; // Người giao
+  senderAddress: string; // Địa chỉ giao
+  recipientName: string; // Tên người nhận
+  recipientAddress: string; // Địa chỉ nhận hàng
   fee: string;
   note: string;
   history: HistoryItem[];
@@ -92,9 +93,9 @@ export default function App() {
         if (id && id.toUpperCase() === trackingId.trim().toUpperCase()) {
           const history: HistoryItem[] = [];
           
-          // Các cột điểm bắt đầu từ cột thứ 10 (index 9)
-          // Cứ 3 cột là 1 điểm: Tên kho (9), Thời gian (10), Nội dung (11)
-          for (let j = 9; j < parts.length; j += 3) {
+          // Các cột điểm bắt đầu từ cột thứ 11 (index 10) do đã thêm cột Người giao
+          // Cứ 3 cột là 1 điểm: Tên kho (10), Thời gian (11), Nội dung (12)
+          for (let j = 10; j < parts.length; j += 3) {
             const tenKho = parts[j]?.trim();
             const thoiGian = parts[j+1]?.trim();
             const noiDung = parts[j+2]?.trim();
@@ -116,11 +117,12 @@ export default function App() {
             id: id.toUpperCase(),
             overallTime: parts[2]?.trim() || '',
             overallStatus: parts[3]?.trim() || '',
-            recipientName: parts[4]?.trim() || '',
-            deliveryAddress: parts[5]?.trim() || '',
-            receivingAddress: parts[6]?.trim() || '',
-            fee: parts[7]?.trim() || '',
-            note: parts[8]?.trim() || '',
+            senderName: parts[4]?.trim() || '', // Người giao
+            senderAddress: parts[5]?.trim() || '', // Địa chỉ giao
+            recipientName: parts[6]?.trim() || '', // Tên người nhận
+            recipientAddress: parts[7]?.trim() || '', // Địa chỉ nhận hàng
+            fee: parts[8]?.trim() || '',
+            note: parts[9]?.trim() || '',
             history: history
           };
           break; // Tìm thấy thì dừng
@@ -152,152 +154,409 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f6f8] font-sans text-slate-900">
-      {/* Header */}
-      <header className="bg-white py-4 shadow-sm border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-4 flex items-center gap-3">
-          <Package className="w-8 h-8 text-blue-900" />
-          <h1 className="text-xl font-bold text-blue-900">Tra cứu vận đơn</h1>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 py-8">
-        {/* Search Box */}
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
-          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto">
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-slate-400" />
-              </div>
+    <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 flex flex-col">
+      {/* Hero Search Section - Always at the top */}
+      <div id="tra-cuu" className="bg-[#1e3a8a] relative overflow-hidden">
+        {/* Decorative background */}
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#ffffff 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}></div>
+        <div className="absolute -right-40 -top-40 w-96 h-96 bg-blue-600 rounded-full blur-3xl opacity-50"></div>
+        <div className="absolute -left-40 -bottom-40 w-96 h-96 bg-[#ea580c] rounded-full blur-3xl opacity-20"></div>
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 sm:py-16 text-center">
+          <img 
+            src="https://raw.githubusercontent.com/fitallest/Tracking/main/src/image/logovietthai.png" 
+            alt="Minh Thiên Logistics Logo" 
+            className="h-28 md:h-36 mx-auto mb-8 object-contain bg-white p-4 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:shadow-[0_0_45px_rgba(255,255,255,0.8)] transition-shadow duration-300"
+            referrerPolicy="no-referrer"
+          />
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">
+            Tra Cứu Hành Trình Đơn Hàng
+          </h2>
+          <p className="text-blue-100 text-lg mb-10 max-w-2xl mx-auto font-medium">
+            Nhập mã vận đơn của bạn để theo dõi tình trạng giao hàng theo thời gian thực giữa Việt Nam và Thái Lan.
+          </p>
+          
+          {/* Search Box */}
+          <form onSubmit={handleSearch} className="bg-white p-2 sm:p-3 rounded-2xl shadow-2xl flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto transform transition-all hover:shadow-blue-900/20">
+            <div className="relative flex-1 flex items-center">
+              <Search className="absolute left-4 w-6 h-6 text-slate-400" />
               <input
                 type="text"
                 value={trackingId}
                 onChange={(e) => setTrackingId(e.target.value)}
-                placeholder="Nhập mã vận đơn..."
-                className="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-md text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+                placeholder="Nhập mã vận đơn (VD: VN1234567C)..."
+                className="w-full pl-14 pr-4 py-4 sm:py-5 bg-transparent border-none text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-0 text-lg sm:text-xl font-medium"
                 required
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="px-8 py-3 bg-[#2b4162] hover:bg-[#1e2e45] text-white font-medium rounded-md transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed whitespace-nowrap"
+              className="px-8 py-4 sm:py-5 bg-[#ea580c] hover:bg-[#d84d08] text-white font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed whitespace-nowrap shadow-lg hover:shadow-orange-500/30"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Tra cứu'}
+              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Tra Cứu Ngay'}
             </button>
           </form>
+          
+          <div className="mt-8 flex items-center justify-center gap-6 text-blue-200 text-sm font-medium">
+            <div className="flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Bảo mật thông tin</div>
+            <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> Cập nhật 24/7</div>
+          </div>
         </div>
+      </div>
 
-        {/* Results Section */}
+      {/* Main Content Area */}
+      <main className="flex-grow w-full">
         {hasSearched && (
-          <div className="space-y-6">
-            {loading ? (
-              <div className="flex flex-col items-center justify-center py-12 text-slate-500 bg-white rounded-lg shadow-sm border border-slate-200">
-                <Loader2 className="w-10 h-10 animate-spin text-blue-600 mb-4" />
-                <p className="text-lg animate-pulse">Đang tìm kiếm...</p>
+          <div className="max-w-5xl mx-auto px-4 py-12 -mt-12 relative z-20">
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {loading ? (
+              <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl shadow-sm border border-slate-200">
+                <Loader2 className="w-12 h-12 animate-spin text-[#ea580c] mb-4" />
+                <p className="text-lg font-medium text-slate-600">Đang kết nối hệ thống...</p>
               </div>
             ) : error ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center bg-white rounded-lg shadow-sm border border-slate-200">
-                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4">
-                  <AlertCircle className="w-8 h-8 text-red-500" />
+              <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl shadow-sm border border-red-100">
+                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-5">
+                  <AlertCircle className="w-10 h-10 text-red-500" />
                 </div>
-                <p className="text-lg text-slate-700 font-medium">{error}</p>
+                <p className="text-2xl text-slate-800 font-bold mb-2">Không tìm thấy đơn hàng</p>
+                <p className="text-slate-500 max-w-md">{error}</p>
               </div>
             ) : result ? (
-              <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                 
-                {/* Top Info Card */}
-                <div className="p-6 border-b border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white">
-                  {/* Left Column */}
-                  <div className="space-y-4">
-                    <div className="flex gap-3">
-                      <span className="text-slate-500 w-32 shrink-0">Người nhận:</span>
-                      <span className="font-semibold text-slate-800">{result.recipientName || '-'}</span>
+                {/* Order Header */}
+                <div className="bg-slate-50 px-6 py-8 sm:px-10 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <div>
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-2">Mã Vận Đơn</p>
+                    <h2 className="text-3xl sm:text-4xl font-black text-[#1e3a8a] flex items-center gap-3">
+                      <Package className="w-8 h-8 text-[#ea580c]" />
+                      {result.id}
+                    </h2>
+                  </div>
+                  <div className="flex flex-col md:items-end w-full md:w-auto">
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-2">Trạng Thái</p>
+                    <div className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-lg ${isDelivered ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-blue-100 text-blue-800 border border-blue-200'}`}>
+                      {isDelivered && <Check className="w-5 h-5" />}
+                      {result.overallStatus || 'Đang xử lý'}
                     </div>
-                    <div className="flex gap-3">
-                      <span className="text-slate-500 w-32 shrink-0">Địa chỉ giao:</span>
-                      <span className="text-slate-800">{result.deliveryAddress || '-'}</span>
+                  </div>
+                </div>
+
+                {/* Information Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200 bg-white">
+                  
+                  {/* Sender & Recipient Column */}
+                  <div className="p-6 sm:p-10 space-y-8">
+                    {/* Sender */}
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-4">
+                        <User className="w-4 h-4" /> Thông Tin Người Giao
+                      </h3>
+                      <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-3">
+                        <div>
+                          <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Người giao</p>
+                          <p className="font-bold text-slate-800 text-lg">{result.senderName || '---'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Địa chỉ giao</p>
+                          <p className="text-slate-700 font-medium flex items-start gap-2">
+                            <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                            <span>{result.senderAddress || '---'}</span>
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex gap-3">
-                      <span className="text-slate-500 w-32 shrink-0">Địa chỉ nhận:</span>
-                      <span className="text-slate-800">{result.receivingAddress || '-'}</span>
+
+                    {/* Arrow Divider */}
+                    <div className="flex justify-center">
+                      <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
+                        <ArrowRight className="w-5 h-5 rotate-90 md:rotate-0" />
+                      </div>
+                    </div>
+
+                    {/* Recipient */}
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-4">
+                        <User className="w-4 h-4" /> Thông Tin Người Nhận
+                      </h3>
+                      <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-3">
+                        <div>
+                          <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Người nhận</p>
+                          <p className="font-bold text-slate-800 text-lg">{result.recipientName || '---'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Địa chỉ nhận</p>
+                          <p className="text-slate-700 font-medium flex items-start gap-2">
+                            <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                            <span>{result.recipientAddress || '---'}</span>
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Right Column */}
-                  <div className="space-y-4 md:border-l md:border-slate-100 md:pl-6">
-                    <div className="flex gap-3">
-                      <span className="text-slate-500 w-32 shrink-0">Mã vận đơn:</span>
-                      <span className="font-bold text-blue-900">{result.id}</span>
-                    </div>
-                    <div className="flex gap-3">
-                      <span className="text-slate-500 w-32 shrink-0">Trạng thái:</span>
-                      <span className={`font-semibold ${isDelivered ? 'text-emerald-500' : 'text-blue-600'}`}>
-                        {result.overallStatus || '-'}
-                      </span>
-                    </div>
-                    <div className="flex gap-3">
-                      <span className="text-slate-500 w-32 shrink-0">Phí vận chuyển:</span>
-                      <span className="text-slate-800">{formatFee(result.fee) || '-'}</span>
-                    </div>
-                    <div className="flex gap-3">
-                      <span className="text-slate-500 w-32 shrink-0">Ghi chú:</span>
-                      <span className="text-slate-800">{result.note || '-'}</span>
+                  {/* Package Details Column */}
+                  <div className="p-6 sm:p-10 bg-slate-50/50">
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-6">
+                      <FileText className="w-4 h-4" /> Chi Tiết Vận Đơn
+                    </h3>
+                    <div className="space-y-6">
+                      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center shrink-0">
+                          <Clock className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-500 uppercase mb-1">Thời gian tạo đơn</p>
+                          <p className="font-bold text-slate-800">{result.overallTime || '---'}</p>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center shrink-0">
+                          <CreditCard className="w-6 h-6 text-[#ea580c]" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-500 uppercase mb-1">Phí vận chuyển</p>
+                          <p className="font-black text-xl text-[#ea580c]">{formatFee(result.fee) || '---'}</p>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <p className="text-xs font-bold text-slate-500 uppercase mb-2">Ghi chú đơn hàng</p>
+                        <p className="text-slate-700 font-medium">
+                          {result.note || 'Không có ghi chú'}
+                        </p>
+                      </div>
                     </div>
                   </div>
+
                 </div>
 
                 {/* Timeline Section */}
-                <div className="p-6 bg-white">
-                  <h3 className="text-lg font-semibold text-slate-800 mb-6">Lịch sử hành trình</h3>
+                <div className="p-6 sm:p-10 border-t border-slate-200 bg-white">
+                  <h3 className="text-xl font-black text-[#1e3a8a] mb-8 flex items-center gap-3">
+                    <Truck className="w-6 h-6 text-[#ea580c]" /> Lịch Trình Vận Chuyển
+                  </h3>
+                  
                   {result.history.length > 0 ? (
-                    <div className="relative pl-2 md:pl-4">
+                    <div className="relative pl-6 md:pl-10 max-w-4xl mx-auto">
                       {/* Vertical line */}
-                      <div className="absolute top-4 bottom-4 left-[19px] md:left-[27px] w-px bg-slate-200"></div>
+                      <div className="absolute top-6 bottom-6 left-[35px] md:left-[51px] w-1 bg-slate-100 rounded-full"></div>
                       
-                      <div className="space-y-0">
+                      <div className="space-y-8">
                         {result.history.map((item, idx) => (
-                          <div key={idx} className="relative flex gap-4 md:gap-6 items-start py-4 border-b border-slate-100 last:border-0">
-                            {/* Check icon */}
-                            <div className={`relative z-10 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 ${idx === 0 ? 'bg-blue-600 text-white ring-4 ring-blue-50' : 'bg-slate-200 text-slate-500'}`}>
-                              <Check className="w-4 h-4" strokeWidth={3} />
+                          <div key={idx} className="relative flex gap-6 md:gap-8 items-start group">
+                            {/* Timeline Node */}
+                            <div className={`relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-1 transition-all duration-300 ${idx === 0 ? 'bg-[#ea580c] text-white ring-8 ring-orange-50 shadow-lg scale-110' : 'bg-white text-slate-400 border-4 border-slate-200 group-hover:border-[#1e3a8a] group-hover:text-[#1e3a8a]'}`}>
+                              {idx === 0 ? <Check className="w-4 h-4" strokeWidth={3} /> : <div className="w-2 h-2 rounded-full bg-current" />}
                             </div>
                             
-                            <div className="flex-1">
-                              <h4 className={`font-medium text-[15px] ${idx === 0 ? 'text-blue-900' : 'text-slate-800'}`}>
-                                {item.title}
-                              </h4>
-                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1">
+                            {/* Content Card */}
+                            <div className={`flex-1 p-5 rounded-2xl border transition-all duration-300 ${idx === 0 ? 'border-[#ea580c]/30 shadow-md bg-orange-50/20' : 'border-slate-100 shadow-sm bg-white hover:border-slate-300 hover:shadow-md'}`}>
+                              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
+                                <h4 className={`font-bold text-lg ${idx === 0 ? 'text-[#ea580c]' : 'text-slate-800'}`}>
+                                  {item.title}
+                                </h4>
                                 {item.time && (
-                                  <span className="text-slate-500 text-sm font-medium">
+                                  <span className="text-slate-600 text-sm font-semibold flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg w-fit">
+                                    <Clock className="w-4 h-4 text-slate-400" />
                                     {item.time}
                                   </span>
                                 )}
-                                {item.time && item.detail && <span className="hidden sm:inline text-slate-300">•</span>}
-                                {item.detail && (
-                                  <span className="text-slate-600 text-sm">
-                                    {item.detail}
-                                  </span>
-                                )}
                               </div>
+                              {item.detail && (
+                                <p className="text-slate-600 font-medium leading-relaxed">
+                                  {item.detail}
+                                </p>
+                              )}
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   ) : (
-                    <div className="text-center py-8 text-slate-500 bg-slate-50 rounded-lg border border-slate-100">
-                      Chưa có thông tin hành trình cho đơn hàng này.
+                    <div className="text-center py-16 text-slate-500 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
+                      <Package className="w-16 h-16 mx-auto text-slate-300 mb-4" />
+                      <p className="text-lg font-semibold text-slate-600">Chưa có thông tin cập nhật hành trình cho đơn hàng này.</p>
+                      <p className="text-sm mt-2">Vui lòng quay lại sau.</p>
                     </div>
                   )}
                 </div>
 
               </div>
             ) : null}
+            </div>
           </div>
         )}
+
+        {/* Strengths Section */}
+        <section id="diem-manh" className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-black text-[#1e3a8a] mb-4">Tại Sao Chọn Minh Thiên Logistics?</h2>
+              <div className="w-24 h-1 bg-[#ea580c] mx-auto mb-6 rounded-full"></div>
+              <p className="text-slate-600 max-w-2xl mx-auto text-lg">Chúng tôi cam kết mang đến dịch vụ vận chuyển chất lượng cao, an toàn và tối ưu chi phí nhất cho mọi khách hàng.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {/* Item 1 */}
+              <div className="bg-slate-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-slate-100">
+                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
+                  <Zap className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-3">Tốc Độ Nhanh Chóng</h3>
+                <p className="text-slate-600">Tối ưu hóa tuyến đường, đảm bảo thời gian giao hàng nhanh nhất từ Việt Nam sang Thái Lan và ngược lại.</p>
+              </div>
+              
+              {/* Item 2 */}
+              <div className="bg-slate-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-slate-100">
+                <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform -rotate-3">
+                  <CreditCard className="w-8 h-8 text-[#ea580c]" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-3">Chi Phí Tối Ưu</h3>
+                <p className="text-slate-600">Bảng giá cạnh tranh, minh bạch, không phát sinh phụ phí ẩn. Tiết kiệm tối đa cho doanh nghiệp.</p>
+              </div>
+              
+              {/* Item 3 */}
+              <div className="bg-slate-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-slate-100">
+                <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
+                  <Shield className="w-8 h-8 text-emerald-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-3">An Toàn Tuyệt Đối</h3>
+                <p className="text-slate-600">Quy trình đóng gói chuẩn quốc tế, bảo hiểm hàng hóa 100%, cam kết đền bù nếu xảy ra rủi ro.</p>
+              </div>
+              
+              {/* Item 4 */}
+              <div className="bg-slate-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-slate-100">
+                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform -rotate-3">
+                  <Headphones className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-3">Hỗ Trợ 24/7</h3>
+                <p className="text-slate-600">Đội ngũ chăm sóc khách hàng chuyên nghiệp, sẵn sàng giải đáp và hỗ trợ mọi lúc, mọi nơi.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section */}
+        <section id="dich-vu" className="py-16 bg-slate-50 border-t border-slate-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-black text-[#1e3a8a] mb-4">Dịch Vụ Nổi Bật</h2>
+              <div className="w-24 h-1 bg-[#ea580c] mx-auto mb-6 rounded-full"></div>
+              <p className="text-slate-600 max-w-2xl mx-auto text-lg">Hệ sinh thái logistics toàn diện, đáp ứng đa dạng nhu cầu vận chuyển của bạn.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Service 1 */}
+              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 group">
+                <div className="h-48 relative overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1586528116311-ad8ed7c50a63?q=80&w=800&auto=format&fit=crop" 
+                    alt="Vận chuyển đường bộ" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                </div>
+                <div className="p-8">
+                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 -mt-14 relative z-10 border-4 border-white shadow-sm">
+                    <Truck className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-3">Vận Chuyển Đường Bộ</h3>
+                  <p className="text-slate-600 mb-4">Đội xe tải hiện đại, chạy tuyến cố định hàng ngày. Phù hợp cho hàng hóa thông thường, linh hoạt thời gian.</p>
+                  <a href="#" className="text-[#ea580c] font-semibold flex items-center gap-1 hover:gap-2 transition-all">Tìm hiểu thêm <ArrowRight className="w-4 h-4" /></a>
+                </div>
+              </div>
+
+              {/* Service 2 */}
+              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 group">
+                <div className="h-48 relative overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1494412519320-aa3da3715a41?q=80&w=800&auto=format&fit=crop" 
+                    alt="Vận chuyển đường biển" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                </div>
+                <div className="p-8">
+                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 -mt-14 relative z-10 border-4 border-white shadow-sm">
+                    <Ship className="w-5 h-5 text-[#ea580c]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-3">Vận Chuyển Đường Biển</h3>
+                  <p className="text-slate-600 mb-4">Giải pháp tối ưu chi phí cho hàng hóa cồng kềnh, số lượng lớn. Lịch trình tàu ổn định, an toàn.</p>
+                  <a href="#" className="text-[#ea580c] font-semibold flex items-center gap-1 hover:gap-2 transition-all">Tìm hiểu thêm <ArrowRight className="w-4 h-4" /></a>
+                </div>
+              </div>
+
+              {/* Service 3 */}
+              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 group">
+                <div className="h-48 relative overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1586528116493-a028225060fa?q=80&w=800&auto=format&fit=crop" 
+                    alt="Kho bãi và Hải quan" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                </div>
+                <div className="p-8">
+                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 -mt-14 relative z-10 border-4 border-white shadow-sm">
+                    <Warehouse className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-3">Kho Bãi & Hải Quan</h3>
+                  <p className="text-slate-600 mb-4">Hệ thống kho bãi rộng lớn, an ninh. Hỗ trợ xử lý thủ tục hải quan trọn gói, nhanh chóng, hợp pháp.</p>
+                  <a href="#" className="text-[#ea580c] font-semibold flex items-center gap-1 hover:gap-2 transition-all">Tìm hiểu thêm <ArrowRight className="w-4 h-4" /></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+      
+      {/* Footer */}
+      <footer id="lien-he" className="bg-[#0f172a] text-slate-400 py-12 border-t border-slate-800 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Truck className="w-6 h-6 text-white" />
+                <h2 className="text-xl font-black text-white tracking-tight">MINH THIÊN <span className="text-[#ea580c]">LOGISTICS</span></h2>
+              </div>
+              <p className="text-sm leading-relaxed max-w-xs">
+                Đơn vị vận chuyển hàng hóa chuyên nghiệp tuyến Việt Nam - Thái Lan. Nhanh chóng, an toàn và tiết kiệm.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Dịch vụ</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="hover:text-white transition-colors">Vận chuyển đường bộ</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Vận chuyển đường biển</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Dịch vụ hải quan</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Giao hàng tận nơi</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Liên hệ</h3>
+              <ul className="space-y-2 text-sm">
+                <li>Hotline: Thịnh - 0787353440</li>
+                <li>Website: minhthienlogistics.net</li>
+                <li>Địa chỉ: TP. Hồ Chí Minh, Việt Nam</li>
+              </ul>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-slate-800 text-center text-sm flex flex-col md:flex-row justify-between items-center gap-4">
+            <p>© 2026 Minh Thiên Logistics. All rights reserved.</p>
+            <div className="flex gap-4">
+              <a href="#" className="hover:text-white transition-colors">Điều khoản</a>
+              <a href="#" className="hover:text-white transition-colors">Bảo mật</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
