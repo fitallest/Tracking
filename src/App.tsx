@@ -524,7 +524,7 @@ export default function App() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Truck className="w-6 h-6 text-white" />
-                <h2 className="text-xl font-black text-white tracking-tight">MINH THIÊN <span className="text-[#ea580c]">LOGISTICS</span></h2>
+                <h2 className="text-xl font-black text-white tracking-tight">MINH THIỆN <span className="text-[#ea580c]">LOGISTICS</span></h2>
               </div>
               <p className="text-sm leading-relaxed max-w-xs">
                 Đơn vị vận chuyển hàng hóa chuyên nghiệp tuyến Việt Nam - Thái Lan. Nhanh chóng, an toàn và tiết kiệm.
