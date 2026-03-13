@@ -188,7 +188,7 @@ export default function App() {
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 sm:py-16 text-center">
           <img 
             src="https://raw.githubusercontent.com/fitallest/Tracking/main/src/image/logovietthai.png" 
-            alt="Minh Thiên Logistics Logo" 
+            alt="Minh Thien Logistics Logo" 
             className="h-28 md:h-36 mx-auto mb-8 object-contain bg-white p-4 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:shadow-[0_0_45px_rgba(255,255,255,0.8)] transition-shadow duration-300"
             referrerPolicy="no-referrer"
           />
@@ -432,7 +432,7 @@ export default function App() {
         <section id="diem-manh" className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-black text-[#1e3a8a] mb-4">Why Choose Minh Thiên Logistics?</h2>
+              <h2 className="text-3xl md:text-4xl font-black text-[#1e3a8a] mb-4">Why Choose Minh Thien Logistics?</h2>
               <div className="w-24 h-1 bg-[#ea580c] mx-auto mb-6 rounded-full"></div>
               <p className="text-slate-600 max-w-2xl mx-auto text-lg">We are committed to providing high-quality, safe, and cost-optimized shipping services for all customers.</p>
             </div>
@@ -561,7 +561,7 @@ export default function App() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Truck className="w-6 h-6 text-white" />
-                <h2 className="text-xl font-black text-white tracking-tight">MINH THIÊN <span className="text-[#ea580c]">LOGISTICS</span></h2>
+                <h2 className="text-xl font-black text-white tracking-tight">Minh Thien <span className="text-[#ea580c]">LOGISTICS</span></h2>
               </div>
               <p className="text-sm leading-relaxed max-w-xs">
                 Professional freight forwarding unit for the Vietnam - Thailand route. Fast, safe, and economical.
@@ -586,7 +586,7 @@ export default function App() {
             </div>
           </div>
           <div className="pt-8 border-t border-slate-800 text-center text-sm flex flex-col md:flex-row justify-between items-center gap-4">
-            <p>© 2026 Minh Thiên Logistics. All rights reserved.</p>
+            <p>© 2026 Minh Thien Logistics. All rights reserved.</p>
             <div className="flex gap-4">
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
