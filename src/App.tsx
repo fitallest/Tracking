@@ -586,7 +586,7 @@ export default function App() {
             </div>
           </div>
           <div className="pt-8 border-t border-slate-800 text-center text-sm flex flex-col md:flex-row justify-between items-center gap-4">
-            <p>© 2026 Minh Thien Logistics. All rights reserved.</p>
+            <p>© 2023 Minh Thien Logistics. All rights reserved.</p>
             <div className="flex gap-4">
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
