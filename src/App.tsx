@@ -177,24 +177,24 @@ export default function App() {
           </p>
           
           {/* Search Box */}
-          <form onSubmit={handleSearch} className="bg-white p-2 sm:p-3 rounded-2xl shadow-2xl flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto transform transition-all hover:shadow-blue-900/20">
-            <div className="relative flex-1 flex items-center">
-              <Search className="absolute left-4 w-6 h-6 text-slate-400" />
+          <form onSubmit={handleSearch} className="bg-white p-3 sm:p-4 rounded-2xl shadow-2xl flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto transform transition-all hover:shadow-blue-900/20 relative z-30">
+            <div className="relative flex-1 flex items-center bg-slate-50 sm:bg-transparent rounded-xl sm:rounded-none border border-slate-200 sm:border-none focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-400 sm:focus-within:border-none sm:focus-within:ring-0 transition-all">
+              <Search className="absolute left-4 w-5 h-5 sm:w-6 sm:h-6 text-slate-400" />
               <input
                 type="text"
                 value={trackingId}
                 onChange={(e) => setTrackingId(e.target.value)}
-                placeholder="Nhập mã vận đơn (VD: VN1234567C)..."
-                className="w-full pl-14 pr-4 py-4 sm:py-5 bg-transparent border-none text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-0 text-lg sm:text-xl font-medium"
+                placeholder="Nhập mã vận đơn..."
+                className="w-full pl-12 sm:pl-14 pr-4 py-3.5 sm:py-5 bg-transparent border-none text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-0 text-base sm:text-xl font-medium"
                 required
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="px-8 py-4 sm:py-5 bg-[#ea580c] hover:bg-[#d84d08] text-white font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed whitespace-nowrap shadow-lg hover:shadow-orange-500/30"
+              className="w-full sm:w-auto px-8 py-3.5 sm:py-5 bg-[#ea580c] hover:bg-[#d84d08] text-white font-bold text-base sm:text-lg rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed whitespace-nowrap shadow-lg hover:shadow-orange-500/30"
             >
-              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Tra Cứu Ngay'}
+              {loading ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : 'Tra Cứu Ngay'}
             </button>
           </form>
           
@@ -230,9 +230,9 @@ export default function App() {
                 <div className="bg-slate-50 px-6 py-8 sm:px-10 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div>
                     <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-2">Mã Vận Đơn</p>
-                    <h2 className="text-3xl sm:text-4xl font-black text-[#1e3a8a] flex items-center gap-3">
-                      <Package className="w-8 h-8 text-[#ea580c]" />
-                      {result.id}
+                    <h2 className="text-3xl sm:text-4xl font-black text-[#1e3a8a] flex items-center gap-3 flex-wrap">
+                      <Package className="w-8 h-8 text-[#ea580c] shrink-0" />
+                      <span className="break-all">{result.id}</span>
                     </h2>
                   </div>
                   <div className="flex flex-col md:items-end w-full md:w-auto">
@@ -272,7 +272,7 @@ export default function App() {
                     {/* Arrow Divider */}
                     <div className="flex justify-center">
                       <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
-                        <ArrowRight className="w-5 h-5 rotate-90 md:rotate-0" />
+                        <ArrowRight className="w-5 h-5 rotate-90" />
                       </div>
                     </div>
 
@@ -343,7 +343,7 @@ export default function App() {
                   {result.history.length > 0 ? (
                     <div className="relative pl-6 md:pl-10 max-w-4xl mx-auto">
                       {/* Vertical line */}
-                      <div className="absolute top-6 bottom-6 left-[35px] md:left-[51px] w-1 bg-slate-100 rounded-full"></div>
+                      <div className="absolute top-6 bottom-6 left-[38px] md:left-[54px] w-1 bg-slate-100 rounded-full"></div>
                       
                       <div className="space-y-8">
                         {result.history.map((item, idx) => (
@@ -454,7 +454,7 @@ export default function App() {
               <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 group">
                 <div className="h-48 relative overflow-hidden">
                   <img 
-                    src="https://images.unsplash.com/photo-1586528116311-ad8ed7c50a63?q=80&w=800&auto=format&fit=crop" 
+                    src="https://i.pinimg.com/736x/27/9e/7f/279e7fcbdabf1a81a0dfaed6e02aa1ef.jpg" 
                     alt="Vận chuyển đường bộ" 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     referrerPolicy="no-referrer"
@@ -475,7 +475,7 @@ export default function App() {
               <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 group">
                 <div className="h-48 relative overflow-hidden">
                   <img 
-                    src="https://images.unsplash.com/photo-1494412519320-aa3da3715a41?q=80&w=800&auto=format&fit=crop" 
+                    src="https://i.pinimg.com/736x/80/81/c5/8081c519bd631844e676e42af2d7e41b.jpg" 
                     alt="Vận chuyển đường biển" 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     referrerPolicy="no-referrer"
@@ -496,7 +496,7 @@ export default function App() {
               <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 group">
                 <div className="h-48 relative overflow-hidden">
                   <img 
-                    src="https://images.unsplash.com/photo-1586528116493-a028225060fa?q=80&w=800&auto=format&fit=crop" 
+                    src="https://i.pinimg.com/1200x/0f/6a/cd/0f6acd8ba83f235de1aa1d64cc27913f.jpg" 
                     alt="Kho bãi và Hải quan" 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     referrerPolicy="no-referrer"
