@@ -877,14 +877,6 @@ export default function App() {
               <p className="text-base leading-relaxed max-w-md mb-8">
                 Premium freight forwarding unit for the Vietnam - Thailand route. We deliver excellence, speed, and reliability in every shipment.
               </p>
-              <div className="flex gap-4">
-                {/* Social Icons Placeholders */}
-                {[1, 2, 3, 4].map((i) => (
-                  <a key={i} href="#lien-he" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#ea580c] hover:text-white transition-colors">
-                    <div className="w-4 h-4 bg-current rounded-sm"></div>
-                  </a>
-                ))}
-              </div>
             </div>
             
             <div>
@@ -904,7 +896,7 @@ export default function App() {
                   <Headphones className="w-5 h-5 text-[#ea580c] shrink-0 mt-0.5" />
                   <div>
                     <p className="text-white font-medium">Hotline</p>
-                    <p>Thịnh - 0787353440</p>
+                    <p>0787353440</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -937,4 +929,3 @@ export default function App() {
     </div>
   );
 }
-
