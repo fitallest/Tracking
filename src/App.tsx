@@ -772,9 +772,9 @@ export default function App() {
               className="grid grid-cols-1 md:grid-cols-3 gap-8"
             >
               {[
-                { name: "Lê Minh Tuấn", role: "CEO, VietThai Export", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=256&auto=format&fit=crop", quote: "Minh Thiện Logistics has completely transformed our supply chain to Thailand. Their speed and transparency are unmatched in the industry." },
+                { name: "Phakhin Wattanapanich", role: "CEO, VietThai Foods", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=256&auto=format&fit=crop", quote: "Minh Thiện Logistics has completely transformed our supply chain to Thailand. Their speed and transparency are unmatched in the industry." },
                 { name: "Kanya Wattana", role: "Operations Manager, Siam Trade", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=256&auto=format&fit=crop", quote: "We've been using their sea freight services for 3 years. Not a single delayed shipment. The 24/7 support team is incredibly responsive." },
-                { name: "Nguyễn Thị Mai", role: "Cross-border E-commerce", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto=format&fit=crop", quote: "The real-time tracking system gives me and my customers peace of mind. Highly recommend their road freight for cross-border e-commerce." }
+                { name: "Chalita Suwanarat", role: "Cross-border E-commerce", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto=format&fit=crop", quote: "The real-time tracking system gives me and my customers peace of mind. Highly recommend their road freight for cross-border e-commerce." }
               ].map((testimonial, index) => (
                 <motion.div key={index} variants={fadeInUp} className="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 relative group hover:-translate-y-2 transition-transform duration-300">
                   <Quote className="absolute top-8 right-8 w-12 h-12 text-slate-50 group-hover:text-blue-50 transition-colors duration-300" />
@@ -896,7 +896,7 @@ export default function App() {
                   <Headphones className="w-5 h-5 text-[#ea580c] shrink-0 mt-0.5" />
                   <div>
                     <p className="text-white font-medium">Hotline</p>
-                    <p>0787353440</p>
+                    <p>0568701182</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
