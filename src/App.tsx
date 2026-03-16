@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Package, Check, Loader2, AlertCircle, MapPin, User, FileText, CreditCard, Truck, Clock, ArrowRight, ShieldCheck, Zap, Shield, Headphones, Ship, Warehouse, X } from 'lucide-react';
+import { Search, Package, Check, Loader2, AlertCircle, MapPin, User, FileText, CreditCard, Truck, Clock, ArrowRight, ShieldCheck, Zap, Shield, Headphones, Ship, Warehouse, X, Globe, Star, TrendingUp, Users, Quote, Calendar, Box, Home, ChevronDown, Building2, Briefcase, Coffee } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 // In a real scenario, replace this with the Google Sheets CSV publish link
 const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQkCq0jHKbkhJ5hjRU6dFAK1wqkM7JpccQaXcwZhDJSg325PYzzdPU4fYyuazxLguXCmpRC9E6rTjhf/pub?output=csv"; 
@@ -66,6 +67,15 @@ export default function App() {
   const [result, setResult] = useState<TrackingRecord | null>(null);
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,420 +186,750 @@ export default function App() {
     return fee;
   };
 
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 flex flex-col">
+    <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900 flex flex-col selection:bg-[#ea580c] selection:text-white">
+      
+      {/* Navigation Bar */}
+      <motion.nav 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'}`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <img 
+              src="https://raw.githubusercontent.com/fitallest/Tracking/main/src/image/logovietthai.png" 
+              alt="Minh Thiện Logistics Logo" 
+              className={`h-10 w-auto object-contain transition-all duration-300 ${!scrolled ? 'brightness-0 invert' : ''}`}
+              referrerPolicy="no-referrer"
+            />
+            <span className={`text-xl font-black tracking-tight ${scrolled ? 'text-[#1e3a8a]' : 'text-white'}`}>
+              MINH THIỆN <span className="text-[#ea580c]">LOGISTICS</span>
+            </span>
+          </div>
+          <div className={`hidden md:flex gap-8 font-medium ${scrolled ? 'text-slate-600' : 'text-white/90'}`}>
+            <a href="#tra-cuu" className="hover:text-[#ea580c] transition-colors">Track</a>
+            <a href="#diem-manh" className="hover:text-[#ea580c] transition-colors">Why Us</a>
+            <a href="#quy-trinh" className="hover:text-[#ea580c] transition-colors">Process</a>
+            <a href="#dich-vu" className="hover:text-[#ea580c] transition-colors">Services</a>
+            <a href="#faq" className="hover:text-[#ea580c] transition-colors">FAQ</a>
+            <a href="#lien-he" className="hover:text-[#ea580c] transition-colors">Contact</a>
+          </div>
+        </div>
+      </motion.nav>
+
       {/* Hero Search Section - Always at the top */}
-      <div id="tra-cuu" className="bg-[#1e3a8a] relative overflow-hidden">
+      <div id="tra-cuu" className="bg-[#0f172a] relative overflow-hidden min-h-[85vh] flex items-center pt-20">
         {/* Decorative background */}
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#ffffff 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}></div>
-        <div className="absolute -right-40 -top-40 w-96 h-96 bg-blue-600 rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute -left-40 -bottom-40 w-96 h-96 bg-[#ea580c] rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#ffffff 1.5px, transparent 1.5px)', backgroundSize: '32px 32px' }}></div>
+        <div className="absolute -right-40 -top-40 w-[600px] h-[600px] bg-blue-600 rounded-full blur-[120px] opacity-30 animate-pulse" style={{ animationDuration: '8s' }}></div>
+        <div className="absolute -left-40 -bottom-40 w-[600px] h-[600px] bg-[#ea580c] rounded-full blur-[120px] opacity-20 animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }}></div>
         
-        <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 sm:py-16 text-center">
-          <img 
-            src="https://raw.githubusercontent.com/fitallest/Tracking/main/src/image/logovietthai.png" 
-            alt="Minh Thien Logistics Logo" 
-            className="h-28 md:h-36 mx-auto mb-8 object-contain bg-white p-4 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:shadow-[0_0_45px_rgba(255,255,255,0.8)] transition-shadow duration-300"
-            referrerPolicy="no-referrer"
-          />
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">
-            Shipment Tracking
-          </h2>
-          <p className="text-blue-100 text-lg mb-10 max-w-2xl mx-auto font-medium">
-            Enter your tracking number to monitor real-time delivery status between Vietnam and Thailand.
-          </p>
+        <div className="relative z-10 max-w-5xl mx-auto px-4 py-12 sm:py-20 text-center w-full">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.8, type: "spring" }}
+          >
+            <img 
+              src="https://raw.githubusercontent.com/fitallest/Tracking/main/src/image/logovietthai.png" 
+              alt="Minh Thiện Logistics Logo" 
+              className="h-24 md:h-32 mx-auto mb-10 object-contain bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.1)]"
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+          
+          <motion.h1 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-4xl sm:text-5xl md:text-7xl font-black text-white mb-6 tracking-tight leading-tight"
+          >
+            Vietnam - Thailand<br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-[#ea580c]">Logistics Excellence.</span>
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-slate-300 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed"
+          >
+            Enter your tracking number to monitor real-time delivery status between Vietnam and Thailand with military-grade precision.
+          </motion.p>
           
           {/* Search Box */}
-          <form onSubmit={handleSearch} className="bg-white p-3 sm:p-4 rounded-2xl shadow-2xl flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto transform transition-all hover:shadow-blue-900/20 relative z-30">
-            <div className="relative flex-1 flex items-center bg-slate-50 sm:bg-transparent rounded-xl sm:rounded-none border border-slate-200 sm:border-none focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-400 sm:focus-within:border-none sm:focus-within:ring-0 transition-all">
-              <Search className="absolute left-4 w-5 h-5 sm:w-6 sm:h-6 text-slate-400" />
+          <motion.form 
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            onSubmit={handleSearch} 
+            className="bg-white/10 backdrop-blur-md p-2 sm:p-3 rounded-2xl border border-white/20 shadow-2xl flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto relative z-30"
+          >
+            <div className="relative flex-1 flex items-center bg-white rounded-xl overflow-hidden">
+              <Search className="absolute left-5 w-6 h-6 text-slate-400" />
               <input
                 type="text"
                 value={trackingId}
                 onChange={(e) => setTrackingId(e.target.value)}
-                placeholder="Enter tracking number..."
-                className="w-full pl-12 sm:pl-14 pr-4 py-3.5 sm:py-5 bg-transparent border-none text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-0 text-base sm:text-xl font-medium"
+                placeholder="Enter tracking number (e.g., MT123456789)"
+                className="w-full pl-14 pr-4 py-4 sm:py-5 bg-transparent border-none text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-0 text-lg font-medium"
                 required
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto px-8 py-3.5 sm:py-5 bg-[#ea580c] hover:bg-[#d84d08] text-white font-bold text-base sm:text-lg rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed whitespace-nowrap shadow-lg hover:shadow-orange-500/30"
+              className="w-full sm:w-auto px-10 py-4 sm:py-5 bg-gradient-to-r from-[#ea580c] to-[#c24100] hover:from-[#d84d08] hover:to-[#a33600] text-white font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-orange-500/30"
             >
-              {loading ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : 'Track Now'}
+              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Track Shipment'}
             </button>
-          </form>
+          </motion.form>
           
-          <div className="mt-8 flex items-center justify-center gap-6 text-blue-200 text-sm font-medium">
-            <div className="flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Secure Information</div>
-            <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> 24/7 Updates</div>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1 }}
+            className="mt-10 flex flex-wrap items-center justify-center gap-6 md:gap-12 text-slate-400 text-sm font-medium"
+          >
+            <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-emerald-400" /> Bank-grade Security</div>
+            <div className="flex items-center gap-2"><Clock className="w-5 h-5 text-blue-400" /> Real-time Updates</div>
+            <div className="flex items-center gap-2"><Globe className="w-5 h-5 text-purple-400" /> Cross-border Network</div>
+          </motion.div>
         </div>
+        
+        {/* Scroll indicator */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50"
+        >
+          <span className="text-xs uppercase tracking-widest">Discover More</span>
+          <motion.div 
+            animate={{ y: [0, 10, 0] }} 
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="w-0.5 h-12 bg-gradient-to-b from-white/50 to-transparent rounded-full"
+          />
+        </motion.div>
       </div>
 
       {/* Tracking Result Modal */}
-      {hasSearched && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm">
-          <div 
-            className="absolute inset-0" 
-            onClick={() => setHasSearched(false)}
-            aria-label="Close modal"
-          ></div>
-          
-          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300">
-            {/* Close Button */}
-            <button 
+      <AnimatePresence>
+        {hasSearched && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/80 backdrop-blur-md"
+          >
+            <div 
+              className="absolute inset-0" 
               onClick={() => setHasSearched(false)}
-              className="absolute top-4 right-4 z-50 p-2 bg-white/80 backdrop-blur rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors shadow-sm"
+              aria-label="Close modal"
+            ></div>
+            
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-white rounded-3xl shadow-2xl"
             >
-              <X className="w-6 h-6" />
-            </button>
+              {/* Close Button */}
+              <button 
+                onClick={() => setHasSearched(false)}
+                className="absolute top-6 right-6 z-50 p-2 bg-slate-100/80 backdrop-blur rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors shadow-sm"
+              >
+                <X className="w-6 h-6" />
+              </button>
 
-            {loading ? (
-              <div className="flex flex-col items-center justify-center py-32">
-                <Loader2 className="w-12 h-12 animate-spin text-[#ea580c] mb-4" />
-                <p className="text-lg font-medium text-slate-600">Connecting to system...</p>
-              </div>
-            ) : error ? (
-              <div className="flex flex-col items-center justify-center py-32 text-center px-6">
-                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-5">
-                  <AlertCircle className="w-10 h-10 text-red-500" />
-                </div>
-                <p className="text-2xl text-slate-800 font-bold mb-2">Shipment Not Found</p>
-                <p className="text-slate-500 max-w-md">{error}</p>
-                <button 
-                  onClick={() => setHasSearched(false)}
-                  className="mt-8 px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition-colors"
-                >
-                  Try Again
-                </button>
-              </div>
-            ) : result ? (
-              <div className="bg-white">
-                
-                {/* Order Header */}
-                <div className="bg-slate-50 px-6 py-8 sm:px-10 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 sticky top-0 z-40">
-                  <div>
-                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-2">Tracking Number</p>
-                    <h2 className="text-3xl sm:text-4xl font-black text-[#1e3a8a] flex items-center gap-3 flex-wrap">
-                      <Package className="w-8 h-8 text-[#ea580c] shrink-0" />
-                      <span className="break-all">{result.id}</span>
-                    </h2>
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-40">
+                  <div className="relative">
+                    <div className="w-20 h-20 border-4 border-slate-100 rounded-full"></div>
+                    <div className="w-20 h-20 border-4 border-[#ea580c] rounded-full border-t-transparent animate-spin absolute inset-0"></div>
+                    <Package className="w-8 h-8 text-[#1e3a8a] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                   </div>
-                  <div className="flex flex-col md:items-end w-full md:w-auto">
-                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-2">Status</p>
-                    <div className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-lg ${isDelivered ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-blue-100 text-blue-800 border border-blue-200'}`}>
-                      {isDelivered && <Check className="w-5 h-5" />}
-                      {result.overallStatus || 'Processing'}
-                    </div>
-                  </div>
+                  <p className="text-xl font-medium text-slate-600 mt-6 tracking-wide">Connecting to secure network...</p>
                 </div>
-
-                {/* Information Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200 bg-white">
+              ) : error ? (
+                <div className="flex flex-col items-center justify-center py-32 text-center px-6">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring" }}
+                    className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6"
+                  >
+                    <AlertCircle className="w-12 h-12 text-red-500" />
+                  </motion.div>
+                  <p className="text-3xl text-slate-800 font-black mb-3">Shipment Not Found</p>
+                  <p className="text-slate-500 text-lg max-w-md">{error}</p>
+                  <button 
+                    onClick={() => setHasSearched(false)}
+                    className="mt-10 px-8 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition-colors"
+                  >
+                    Try Another Number
+                  </button>
+                </div>
+              ) : result ? (
+                <div className="bg-white">
                   
-                  {/* Sender & Recipient Column */}
-                  <div className="p-6 sm:p-10 space-y-8">
-                    {/* Sender */}
+                  {/* Order Header */}
+                  <div className="bg-gradient-to-r from-slate-50 to-white px-6 py-10 sm:px-12 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 sticky top-0 z-40">
                     <div>
-                      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-4">
-                        <User className="w-4 h-4" /> Sender Information
-                      </h3>
-                      <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-3">
-                        <div>
-                          <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Sender</p>
-                          <p className="font-bold text-slate-800 text-lg">{result.senderName || '---'}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Sender Address</p>
-                          <p className="text-slate-700 font-medium flex items-start gap-2">
-                            <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                            <span>{result.senderAddress || '---'}</span>
-                          </p>
-                        </div>
-                      </div>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Tracking Number</p>
+                      <h2 className="text-3xl sm:text-5xl font-black text-[#1e3a8a] flex items-center gap-4 flex-wrap">
+                        <Package className="w-10 h-10 text-[#ea580c] shrink-0" />
+                        <span className="break-all tracking-tight">{result.id}</span>
+                      </h2>
                     </div>
-
-                    {/* Recipient */}
-                    <div>
-                      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-4">
-                        <User className="w-4 h-4" /> Recipient Information
-                      </h3>
-                      <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 space-y-3">
-                        <div>
-                          <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Recipient</p>
-                          <p className="font-bold text-slate-800 text-lg">{result.recipientName || '---'}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-slate-500 uppercase mb-1">Recipient Address</p>
-                          <p className="text-slate-700 font-medium flex items-start gap-2">
-                            <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                            <span>{result.recipientAddress || '---'}</span>
-                          </p>
-                        </div>
+                    <div className="flex flex-col md:items-end w-full md:w-auto">
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Current Status</p>
+                      <div className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-lg shadow-sm ${isDelivered ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}`}>
+                        {isDelivered && <Check className="w-5 h-5" />}
+                        {result.overallStatus || 'Processing'}
                       </div>
                     </div>
                   </div>
 
-                  {/* Package Details Column */}
-                  <div className="p-6 sm:p-10 bg-slate-50/50">
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-6">
-                      <FileText className="w-4 h-4" /> Shipment Details
+                  {/* Information Grid */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-100 bg-white">
+                    
+                    {/* Sender & Recipient Column */}
+                    <div className="p-6 sm:p-12 space-y-10">
+                      {/* Sender */}
+                      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-5">
+                          <User className="w-4 h-4" /> Sender Information
+                        </h3>
+                        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow space-y-4">
+                          <div>
+                            <p className="text-xs font-semibold text-slate-400 uppercase mb-1">Sender</p>
+                            <p className="font-bold text-slate-800 text-xl">{result.senderName || '---'}</p>
+                          </div>
+                          <div className="pt-4 border-t border-slate-50">
+                            <p className="text-xs font-semibold text-slate-400 uppercase mb-1">Origin Address</p>
+                            <p className="text-slate-600 font-medium flex items-start gap-2">
+                              <MapPin className="w-5 h-5 text-[#ea580c] shrink-0 mt-0.5" />
+                              <span>{result.senderAddress || '---'}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      {/* Recipient */}
+                      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-5">
+                          <User className="w-4 h-4" /> Recipient Information
+                        </h3>
+                        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow space-y-4">
+                          <div>
+                            <p className="text-xs font-semibold text-slate-400 uppercase mb-1">Recipient</p>
+                            <p className="font-bold text-slate-800 text-xl">{result.recipientName || '---'}</p>
+                          </div>
+                          <div className="pt-4 border-t border-slate-50">
+                            <p className="text-xs font-semibold text-slate-400 uppercase mb-1">Destination Address</p>
+                            <p className="text-slate-600 font-medium flex items-start gap-2">
+                              <MapPin className="w-5 h-5 text-[#1e3a8a] shrink-0 mt-0.5" />
+                              <span>{result.recipientAddress || '---'}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    {/* Package Details Column */}
+                    <div className="p-6 sm:p-12 bg-slate-50/50">
+                      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-6">
+                        <FileText className="w-4 h-4" /> Shipment Details
+                      </h3>
+                      <div className="space-y-6">
+                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+                          <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
+                            <Clock className="w-7 h-7 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-slate-400 uppercase mb-1">Creation Time</p>
+                            <p className="font-bold text-slate-800 text-lg">{result.overallTime || '---'}</p>
+                          </div>
+                        </motion.div>
+
+                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+                          <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0">
+                            <CreditCard className="w-7 h-7 text-[#ea580c]" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-slate-400 uppercase mb-1">Shipping Fee</p>
+                            <p className="font-black text-2xl text-[#ea580c] tracking-tight">{formatFee(result.fee) || '---'}</p>
+                          </div>
+                        </motion.div>
+
+                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                          <p className="text-xs font-bold text-slate-400 uppercase mb-3">Notes & Instructions</p>
+                          <p className="text-slate-600 font-medium leading-relaxed">
+                            {result.note || 'No special instructions provided.'}
+                          </p>
+                        </motion.div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Timeline Section */}
+                  <div className="p-6 sm:p-12 border-t border-slate-100 bg-white">
+                    <h3 className="text-2xl font-black text-[#1e3a8a] mb-10 flex items-center gap-3">
+                      <TrendingUp className="w-7 h-7 text-[#ea580c]" /> Tracking History
                     </h3>
-                    <div className="space-y-6">
-                      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                        <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center shrink-0">
-                          <Clock className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-500 uppercase mb-1">Creation Time</p>
-                          <p className="font-bold text-slate-800">{result.overallTime || '---'}</p>
-                        </div>
-                      </div>
-
-                      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                        <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center shrink-0">
-                          <CreditCard className="w-6 h-6 text-[#ea580c]" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-500 uppercase mb-1">Shipping Fee</p>
-                          <p className="font-black text-xl text-[#ea580c]">{formatFee(result.fee) || '---'}</p>
-                        </div>
-                      </div>
-
-                      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <p className="text-xs font-bold text-slate-500 uppercase mb-2">Notes</p>
-                        <p className="text-slate-700 font-medium">
-                          {result.note || 'No notes'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Timeline Section */}
-                <div className="p-6 sm:p-10 border-t border-slate-200 bg-white">
-                  <h3 className="text-xl font-black text-[#1e3a8a] mb-8 flex items-center gap-3">
-                    <Truck className="w-6 h-6 text-[#ea580c]" /> Tracking History
-                  </h3>
-                  
-                  {result.history.length > 0 ? (
-                    <div className="relative pl-6 md:pl-10 max-w-4xl mx-auto">
-                      {/* Vertical line */}
-                      <div className="absolute top-6 bottom-6 left-[38px] md:left-[54px] w-1 bg-slate-100 rounded-full"></div>
-                      
-                      <div className="space-y-8">
-                        {result.history.map((item, idx) => (
-                          <div key={idx} className="relative flex gap-6 md:gap-8 items-start group">
-                            {/* Timeline Node */}
-                            <div className={`relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-1 transition-all duration-300 ${idx === 0 ? 'bg-[#ea580c] text-white ring-8 ring-orange-50 shadow-lg scale-110' : 'bg-white text-slate-400 border-4 border-slate-200 group-hover:border-[#1e3a8a] group-hover:text-[#1e3a8a]'}`}>
-                              {idx === 0 ? <Check className="w-4 h-4" strokeWidth={3} /> : <div className="w-2 h-2 rounded-full bg-current" />}
-                            </div>
-                            
-                            {/* Content Card */}
-                            <div className={`flex-1 p-5 rounded-2xl border transition-all duration-300 ${idx === 0 ? 'border-[#ea580c]/30 shadow-md bg-orange-50/20' : 'border-slate-100 shadow-sm bg-white hover:border-slate-300 hover:shadow-md'}`}>
-                              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
-                                <h4 className={`font-bold text-lg ${idx === 0 ? 'text-[#ea580c]' : 'text-slate-800'}`}>
-                                  {item.title}
-                                </h4>
-                                {item.time && (
-                                  <span className="text-slate-600 text-sm font-semibold flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg w-fit">
-                                    <Clock className="w-4 h-4 text-slate-400" />
-                                    {item.time}
-                                  </span>
+                    
+                    {result.history.length > 0 ? (
+                      <div className="relative pl-6 md:pl-12 max-w-4xl mx-auto">
+                        {/* Vertical line */}
+                        <div className="absolute top-8 bottom-8 left-[38px] md:left-[62px] w-1 bg-slate-100 rounded-full"></div>
+                        
+                        <div className="space-y-10">
+                          {result.history.map((item, idx) => (
+                            <motion.div 
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.3 + (idx * 0.1) }}
+                              key={idx} 
+                              className="relative flex gap-6 md:gap-10 items-start group"
+                            >
+                              {/* Timeline Node */}
+                              <div className={`relative z-10 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center mt-1 transition-all duration-500 ${idx === 0 ? 'bg-gradient-to-br from-[#ea580c] to-[#c24100] text-white ring-8 ring-orange-50 shadow-xl scale-110' : 'bg-white text-slate-300 border-4 border-slate-100 group-hover:border-[#1e3a8a] group-hover:text-[#1e3a8a]'}`}>
+                                {idx === 0 ? <Check className="w-5 h-5" strokeWidth={3} /> : <div className="w-2.5 h-2.5 rounded-full bg-current" />}
+                              </div>
+                              
+                              {/* Content Card */}
+                              <div className={`flex-1 p-6 rounded-2xl border transition-all duration-300 ${idx === 0 ? 'border-[#ea580c]/20 shadow-lg bg-gradient-to-br from-orange-50/50 to-white' : 'border-slate-100 shadow-sm bg-white hover:border-slate-200 hover:shadow-md'}`}>
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                                  <h4 className={`font-bold text-xl ${idx === 0 ? 'text-[#ea580c]' : 'text-slate-800'}`}>
+                                    {item.title}
+                                  </h4>
+                                  {item.time && (
+                                    <span className="text-slate-500 text-sm font-bold flex items-center gap-2 bg-slate-50 border border-slate-100 px-4 py-2 rounded-xl w-fit">
+                                      <Clock className="w-4 h-4 text-slate-400" />
+                                      {item.time}
+                                    </span>
+                                  )}
+                                </div>
+                                {item.detail && (
+                                  <p className="text-slate-600 font-medium leading-relaxed">
+                                    {item.detail}
+                                  </p>
                                 )}
                               </div>
-                              {item.detail && (
-                                <p className="text-slate-600 font-medium leading-relaxed">
-                                  {item.detail}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        ))}
+                            </motion.div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-16 text-slate-500 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
-                      <Package className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-                      <p className="text-lg font-semibold text-slate-600">No tracking history available for this shipment yet.</p>
-                      <p className="text-sm mt-2">Please check back later.</p>
-                    </div>
-                  )}
-                </div>
+                    ) : (
+                      <div className="text-center py-20 text-slate-500 bg-slate-50 rounded-3xl border border-slate-200 border-dashed">
+                        <Package className="w-20 h-20 mx-auto text-slate-300 mb-6" />
+                        <p className="text-xl font-bold text-slate-700">No tracking history available yet.</p>
+                        <p className="text-base mt-2">The shipment details will be updated shortly.</p>
+                      </div>
+                    )}
+                  </div>
 
-              </div>
-            ) : null}
-          </div>
-        </div>
-      )}
+                </div>
+              ) : null}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Content Area */}
       <main className="flex-grow w-full">
-        {/* Strengths Section */}
-        <section id="diem-manh" className="py-16 bg-white">
+        
+        {/* Statistics Section */}
+        <section id="thong-ke" className="py-20 bg-white relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12"
+            >
+              {[
+                { icon: Globe, value: "15+", label: "Years Experience" },
+                { icon: Package, value: "1M+", label: "Parcels Delivered" },
+                { icon: Users, value: "50k+", label: "Happy Clients" },
+                { icon: Star, value: "99%", label: "Satisfaction Rate" }
+              ].map((stat, index) => (
+                <motion.div key={index} variants={fadeInUp} className="text-center group">
+                  <div className="w-16 h-16 mx-auto bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#1e3a8a] group-hover:text-white transition-colors duration-300 shadow-sm">
+                    <stat.icon className="w-8 h-8 text-[#ea580c] group-hover:text-white transition-colors duration-300" />
+                  </div>
+                  <h3 className="text-4xl md:text-5xl font-black text-slate-800 mb-2 tracking-tight">{stat.value}</h3>
+                  <p className="text-slate-500 font-medium uppercase tracking-wider text-sm">{stat.label}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Trusted By / Partners */}
+        <section className="py-12 bg-white border-b border-slate-100 overflow-hidden flex flex-col items-center">
+          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-8 text-center">Trusted by industry leaders</p>
+          <div className="flex gap-12 md:gap-24 items-center justify-center flex-wrap opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <div className="flex items-center gap-2 font-black text-2xl text-slate-800"><Building2 className="w-8 h-8 text-[#1e3a8a]"/> VIETCORP</div>
+            <div className="flex items-center gap-2 font-black text-2xl text-slate-800"><Briefcase className="w-8 h-8 text-[#ea580c]"/> THAIGLOBAL</div>
+            <div className="flex items-center gap-2 font-black text-2xl text-slate-800"><Coffee className="w-8 h-8 text-emerald-600"/> MEKONG</div>
+            <div className="flex items-center gap-2 font-black text-2xl text-slate-800"><Globe className="w-8 h-8 text-blue-500"/> ASIA EXPORT</div>
+            <div className="flex items-center gap-2 font-black text-2xl text-slate-800"><Box className="w-8 h-8 text-purple-600"/> LOGISPRO</div>
+          </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section id="quy-trinh" className="py-24 bg-slate-50 relative border-b border-slate-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-black text-[#1e3a8a] mb-4">Why Choose Minh Thien Logistics?</h2>
-              <div className="w-24 h-1 bg-[#ea580c] mx-auto mb-6 rounded-full"></div>
-              <p className="text-slate-600 max-w-2xl mx-auto text-lg">We are committed to providing high-quality, safe, and cost-optimized shipping services for all customers.</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {/* Item 1 */}
-              <div className="bg-slate-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-slate-100">
-                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
-                  <Zap className="w-8 h-8 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3">Outstanding Speed</h3>
-                <p className="text-slate-600">Route optimization to ensure the fastest delivery time from Vietnam to Thailand and vice versa.</p>
-              </div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-20"
+            >
+              <h2 className="text-sm font-bold text-[#ea580c] uppercase tracking-widest mb-3">Simple & Transparent</h2>
+              <h3 className="text-4xl md:text-5xl font-black text-[#1e3a8a] mb-6 tracking-tight">How It Works</h3>
+              <div className="w-24 h-1.5 bg-gradient-to-r from-[#ea580c] to-[#c24100] mx-auto mb-8 rounded-full"></div>
+            </motion.div>
+
+            <div className="relative">
+              {/* Connecting Line */}
+              <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-1 bg-slate-200 rounded-full"></div>
               
-              {/* Item 2 */}
-              <div className="bg-slate-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-slate-100">
-                <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform -rotate-3">
-                  <CreditCard className="w-8 h-8 text-[#ea580c]" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3">Cost Optimization</h3>
-                <p className="text-slate-600">Competitive and transparent pricing with no hidden fees. Maximum savings for businesses.</p>
-              </div>
-              
-              {/* Item 3 */}
-              <div className="bg-slate-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-slate-100">
-                <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
-                  <Shield className="w-8 h-8 text-emerald-600" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3">Absolute Safety</h3>
-                <p className="text-slate-600">International standard packaging processes, 100% cargo insurance, and compensation commitment for any risks.</p>
-              </div>
-              
-              {/* Item 4 */}
-              <div className="bg-slate-50 rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-slate-100">
-                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform -rotate-3">
-                  <Headphones className="w-8 h-8 text-purple-600" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3">24/7 Support</h3>
-                <p className="text-slate-600">Professional customer service team, ready to answer inquiries and provide support anytime, anywhere.</p>
-              </div>
+              <motion.div 
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10"
+              >
+                {[
+                  { step: "01", icon: Calendar, title: "Book Service", desc: "Request a quote and schedule your shipment online or via hotline." },
+                  { step: "02", icon: Box, title: "Pack & Pickup", desc: "We provide packaging guidelines and pick up the cargo at your door." },
+                  { step: "03", icon: Truck, title: "Transit & Clear", desc: "Fast transportation and seamless customs clearance at borders." },
+                  { step: "04", icon: Home, title: "Safe Delivery", desc: "Final mile delivery to the recipient's address with proof of receipt." }
+                ].map((item, index) => (
+                  <motion.div key={index} variants={fadeInUp} className="relative text-center group">
+                    <div className="w-24 h-24 mx-auto bg-white border-4 border-slate-100 rounded-full flex items-center justify-center mb-6 relative z-10 group-hover:border-[#ea580c] transition-colors duration-500 shadow-xl shadow-slate-200/50">
+                      <item.icon className="w-10 h-10 text-[#1e3a8a] group-hover:text-[#ea580c] transition-colors duration-500" />
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#ea580c] text-white font-bold rounded-full flex items-center justify-center border-4 border-white shadow-sm">
+                        {item.step}
+                      </div>
+                    </div>
+                    <h4 className="text-xl font-bold text-slate-800 mb-3">{item.title}</h4>
+                    <p className="text-slate-600 leading-relaxed">{item.desc}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
             </div>
           </div>
         </section>
 
-        {/* Services Section */}
-        <section id="dich-vu" className="py-16 bg-slate-50 border-t border-slate-200">
+        {/* Strengths Section */}
+        <section id="diem-manh" className="py-24 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-black text-[#1e3a8a] mb-4">Featured Services</h2>
-              <div className="w-24 h-1 bg-[#ea580c] mx-auto mb-6 rounded-full"></div>
-              <p className="text-slate-600 max-w-2xl mx-auto text-lg">A comprehensive logistics ecosystem meeting diverse shipping needs.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Service 1 */}
-              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 group">
-                <div className="h-48 relative overflow-hidden">
-                  <img 
-                    src="https://i.pinimg.com/736x/27/9e/7f/279e7fcbdabf1a81a0dfaed6e02aa1ef.jpg" 
-                    alt="Road Freight" 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                </div>
-                <div className="p-8">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 -mt-14 relative z-10 border-4 border-white shadow-sm">
-                    <Truck className="w-5 h-5 text-blue-600" />
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-20"
+            >
+              <h2 className="text-4xl md:text-5xl font-black text-[#1e3a8a] mb-6 tracking-tight">Why Choose Minh Thiện?</h2>
+              <div className="w-24 h-1.5 bg-gradient-to-r from-[#ea580c] to-[#c24100] mx-auto mb-8 rounded-full"></div>
+              <p className="text-slate-600 max-w-3xl mx-auto text-xl font-light leading-relaxed">
+                We combine industry expertise with cutting-edge technology to deliver seamless logistics solutions across borders.
+              </p>
+            </motion.div>
+            
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            >
+              {[
+                { icon: Zap, title: "Lightning Fast", desc: "Optimized routing algorithms ensure the fastest possible delivery times between Vietnam and Thailand.", color: "blue" },
+                { icon: CreditCard, title: "Cost Effective", desc: "Transparent pricing models with zero hidden fees. We maximize your business savings.", color: "orange" },
+                { icon: Shield, title: "Fully Secured", desc: "International standard packaging, comprehensive cargo insurance, and guaranteed compensation.", color: "emerald" },
+                { icon: Headphones, title: "24/7 Support", desc: "Dedicated logistics experts available around the clock to assist with your shipments.", color: "purple" }
+              ].map((item, index) => (
+                <motion.div key={index} variants={fadeInUp} className="bg-white rounded-3xl p-10 text-center hover:-translate-y-2 transition-transform duration-300 shadow-xl shadow-slate-200/50 border border-slate-100 group">
+                  <div className={`w-20 h-20 bg-${item.color}-50 rounded-2xl flex items-center justify-center mx-auto mb-8 transform group-hover:rotate-6 transition-transform duration-300`}>
+                    <item.icon className={`w-10 h-10 text-${item.color}-600`} />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-3">Road Freight</h3>
-                  <p className="text-slate-600 mb-4">Modern truck fleet with daily fixed routes. Suitable for general cargo with flexible timing.</p>
-                  <a href="#" className="text-[#ea580c] font-semibold flex items-center gap-1 hover:gap-2 transition-all">Learn more <ArrowRight className="w-4 h-4" /></a>
-                </div>
-              </div>
+                  <h3 className="text-2xl font-bold text-slate-800 mb-4">{item.title}</h3>
+                  <p className="text-slate-600 leading-relaxed">{item.desc}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
 
-              {/* Service 2 */}
-              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 group">
-                <div className="h-48 relative overflow-hidden">
-                  <img 
-                    src="https://i.pinimg.com/736x/80/81/c5/8081c519bd631844e676e42af2d7e41b.jpg" 
-                    alt="Sea Freight" 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                </div>
-                <div className="p-8">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 -mt-14 relative z-10 border-4 border-white shadow-sm">
-                    <Ship className="w-5 h-5 text-[#ea580c]" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-3">Sea Freight</h3>
-                  <p className="text-slate-600 mb-4">Cost-effective solutions for bulky and large-volume cargo. Stable and safe shipping schedules.</p>
-                  <a href="#" className="text-[#ea580c] font-semibold flex items-center gap-1 hover:gap-2 transition-all">Learn more <ArrowRight className="w-4 h-4" /></a>
-                </div>
-              </div>
+        {/* Services Section */}
+        <section id="dich-vu" className="py-24 bg-white border-t border-slate-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-20"
+            >
+              <h2 className="text-4xl md:text-5xl font-black text-[#1e3a8a] mb-6 tracking-tight">Premium Services</h2>
+              <div className="w-24 h-1.5 bg-gradient-to-r from-[#ea580c] to-[#c24100] mx-auto mb-8 rounded-full"></div>
+              <p className="text-slate-600 max-w-3xl mx-auto text-xl font-light leading-relaxed">
+                A comprehensive logistics ecosystem designed to meet the most demanding shipping requirements.
+              </p>
+            </motion.div>
 
-              {/* Service 3 */}
-              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-slate-100 group">
-                <div className="h-48 relative overflow-hidden">
-                  <img 
-                    src="https://i.pinimg.com/1200x/0f/6a/cd/0f6acd8ba83f235de1aa1d64cc27913f.jpg" 
-                    alt="Warehousing & Customs" 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                </div>
-                <div className="p-8">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 -mt-14 relative z-10 border-4 border-white shadow-sm">
-                    <Warehouse className="w-5 h-5 text-emerald-600" />
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-10"
+            >
+              {[
+                { img: "https://i.pinimg.com/736x/27/9e/7f/279e7fcbdabf1a81a0dfaed6e02aa1ef.jpg", icon: Truck, title: "Road Freight", desc: "Modern truck fleet with daily fixed routes. Suitable for general cargo with flexible timing and door-to-door delivery options.", color: "blue" },
+                { img: "https://i.pinimg.com/736x/80/81/c5/8081c519bd631844e676e42af2d7e41b.jpg", icon: Ship, title: "Sea Freight", desc: "Cost-effective solutions for bulky and large-volume cargo. Stable and safe shipping schedules with full container load (FCL) and less than container load (LCL) options.", color: "orange" },
+                { img: "https://i.pinimg.com/1200x/0f/6a/cd/0f6acd8ba83f235de1aa1d64cc27913f.jpg", icon: Warehouse, title: "Warehousing & Customs", desc: "Large, secure warehousing system with advanced inventory management. Comprehensive, fast, and legal customs clearance support by our expert team.", color: "emerald" }
+              ].map((service, index) => (
+                <motion.div key={index} variants={fadeInUp} className="bg-white rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100 group">
+                  <div className="h-64 relative overflow-hidden">
+                    <img 
+                      src={service.img} 
+                      alt={service.title} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <h3 className="text-2xl font-bold text-white mb-2">{service.title}</h3>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-3">Warehousing & Customs</h3>
-                  <p className="text-slate-600 mb-4">Large and secure warehousing system. Comprehensive, fast, and legal customs clearance support.</p>
-                  <a href="#" className="text-[#ea580c] font-semibold flex items-center gap-1 hover:gap-2 transition-all">Learn more <ArrowRight className="w-4 h-4" /></a>
-                </div>
+                  <div className="p-8 relative">
+                    <div className={`w-14 h-14 bg-${service.color}-50 rounded-2xl flex items-center justify-center absolute -top-14 right-8 shadow-lg border-4 border-white transform group-hover:-translate-y-2 transition-transform duration-300`}>
+                      <service.icon className={`w-6 h-6 text-${service.color}-600`} />
+                    </div>
+                    <p className="text-slate-600 mb-6 leading-relaxed">{service.desc}</p>
+                    <a href="#lien-he" className="inline-flex items-center gap-2 text-[#ea580c] font-bold hover:text-[#c24100] transition-colors group/link">
+                      Explore Service 
+                      <ArrowRight className="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform" />
+                    </a>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section id="danh-gia" className="py-24 bg-slate-50 relative overflow-hidden border-t border-slate-100">
+          <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#1e3a8a]/5 to-transparent"></div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-20"
+            >
+              <h2 className="text-sm font-bold text-[#ea580c] uppercase tracking-widest mb-3">Client Stories</h2>
+              <h3 className="text-4xl md:text-5xl font-black text-[#1e3a8a] mb-6 tracking-tight">Trusted by Thousands</h3>
+              <div className="w-24 h-1.5 bg-gradient-to-r from-[#ea580c] to-[#c24100] mx-auto mb-8 rounded-full"></div>
+            </motion.div>
+
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
+              {[
+                { name: "Lê Minh Tuấn", role: "CEO, VietThai Export", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=256&auto=format&fit=crop", quote: "Minh Thiện Logistics has completely transformed our supply chain to Thailand. Their speed and transparency are unmatched in the industry." },
+                { name: "Kanya Wattana", role: "Operations Manager, Siam Trade", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=256&auto=format&fit=crop", quote: "We've been using their sea freight services for 3 years. Not a single delayed shipment. The 24/7 support team is incredibly responsive." },
+                { name: "Nguyễn Thị Mai", role: "Cross-border E-commerce", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256&auto=format&fit=crop", quote: "The real-time tracking system gives me and my customers peace of mind. Highly recommend their road freight for cross-border e-commerce." }
+              ].map((testimonial, index) => (
+                <motion.div key={index} variants={fadeInUp} className="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 relative group hover:-translate-y-2 transition-transform duration-300">
+                  <Quote className="absolute top-8 right-8 w-12 h-12 text-slate-50 group-hover:text-blue-50 transition-colors duration-300" />
+                  <div className="flex gap-1 mb-6">
+                    {[1, 2, 3, 4, 5].map(star => <Star key={star} className="w-5 h-5 text-yellow-400 fill-yellow-400" />)}
+                  </div>
+                  <p className="text-slate-600 text-lg italic mb-8 relative z-10">"{testimonial.quote}"</p>
+                  <div className="flex items-center gap-4">
+                    <img src={testimonial.img} alt={testimonial.name} className="w-14 h-14 rounded-full object-cover border-2 border-slate-100" referrerPolicy="no-referrer" />
+                    <div>
+                      <h4 className="font-bold text-slate-800">{testimonial.name}</h4>
+                      <p className="text-sm text-slate-500">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section id="faq" className="py-24 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-sm font-bold text-[#ea580c] uppercase tracking-widest mb-3">Support Center</h2>
+              <h3 className="text-4xl md:text-5xl font-black text-[#1e3a8a] mb-6 tracking-tight">Frequently Asked Questions</h3>
+              <div className="w-24 h-1.5 bg-gradient-to-r from-[#ea580c] to-[#c24100] mx-auto mb-8 rounded-full"></div>
+            </motion.div>
+
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              {[
+                { q: "How long does shipping from Vietnam to Thailand take?", a: "Road freight typically takes 3-5 days, while sea freight can take 7-10 days depending on the port of departure and destination." },
+                { q: "Do you provide customs clearance services?", a: "Yes, we offer comprehensive end-to-door customs clearance services for both export in Vietnam and import in Thailand." },
+                { q: "Is my cargo insured during transit?", a: "Absolutely. We provide 100% cargo insurance for all shipments, ensuring you are fully compensated in the rare event of damage or loss." },
+                { q: "How can I track my shipment?", a: "You can use the tracking tool at the top of this page. Simply enter your Tracking ID (e.g., MT123456) to see real-time updates." }
+              ].map((faq, index) => (
+                <motion.div key={index} variants={fadeInUp} className="bg-slate-50 rounded-2xl p-8 border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all group">
+                  <div className="flex justify-between items-center gap-4">
+                    <h4 className="text-xl font-bold text-slate-800 group-hover:text-[#1e3a8a] transition-colors">{faq.q}</h4>
+                  </div>
+                  <p className="mt-4 text-slate-600 leading-relaxed text-lg">{faq.a}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 relative overflow-hidden bg-[#1e3a8a]">
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#ffffff 1.5px, transparent 1.5px)', backgroundSize: '32px 32px' }}></div>
+          <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">Ready to ship with us?</h2>
+              <p className="text-blue-100 text-lg md:text-xl mb-10 font-light">Experience the most reliable logistics network between Vietnam and Thailand.</p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#lien-he" className="px-8 py-4 bg-[#ea580c] hover:bg-[#d84d08] text-white font-bold rounded-xl transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2">
+                  Get a Quote <ArrowRight className="w-5 h-5" />
+                </a>
+                <a href="#lien-he" className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all backdrop-blur-sm border border-white/20 flex items-center justify-center">
+                  Contact Sales
+                </a>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
       </main>
       
       {/* Footer */}
-      <footer id="lien-he" className="bg-[#0f172a] text-slate-400 py-12 border-t border-slate-800 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Truck className="w-6 h-6 text-white" />
-                <h2 className="text-xl font-black text-white tracking-tight">Minh Thien <span className="text-[#ea580c]">LOGISTICS</span></h2>
+      <footer id="lien-he" className="bg-[#0f172a] text-slate-400 py-16 border-t border-slate-800 mt-auto relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#1e3a8a] via-[#ea580c] to-[#1e3a8a]"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+            <div className="lg:col-span-2">
+              <div className="flex items-center gap-2 mb-6">
+                <img 
+                  src="https://raw.githubusercontent.com/fitallest/Tracking/main/src/image/logovietthai.png" 
+                  alt="Minh Thiện Logistics Logo" 
+                  className="h-10 w-auto object-contain brightness-0 invert"
+                  referrerPolicy="no-referrer"
+                />
+                <h2 className="text-2xl font-black text-white tracking-tight">MINH THIỆN <span className="text-[#ea580c]">LOGISTICS</span></h2>
               </div>
-              <p className="text-sm leading-relaxed max-w-xs">
-                Professional freight forwarding unit for the Vietnam - Thailand route. Fast, safe, and economical.
+              <p className="text-base leading-relaxed max-w-md mb-8">
+                Premium freight forwarding unit for the Vietnam - Thailand route. We deliver excellence, speed, and reliability in every shipment.
               </p>
+              <div className="flex gap-4">
+                {/* Social Icons Placeholders */}
+                {[1, 2, 3, 4].map((i) => (
+                  <a key={i} href="#lien-he" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#ea580c] hover:text-white transition-colors">
+                    <div className="w-4 h-4 bg-current rounded-sm"></div>
+                  </a>
+                ))}
+              </div>
             </div>
+            
             <div>
-              <h3 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Services</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Road Freight</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Sea Freight</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Customs Services</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Door-to-Door Delivery</a></li>
+              <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Our Services</h3>
+              <ul className="space-y-3 text-base">
+                <li><a href="#dich-vu" className="hover:text-[#ea580c] transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Road Freight</a></li>
+                <li><a href="#dich-vu" className="hover:text-[#ea580c] transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Sea Freight</a></li>
+                <li><a href="#dich-vu" className="hover:text-[#ea580c] transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Customs Clearance</a></li>
+                <li><a href="#dich-vu" className="hover:text-[#ea580c] transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Warehousing</a></li>
               </ul>
             </div>
+            
             <div>
-              <h3 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Contact</h3>
-              <ul className="space-y-2 text-sm">
-                <li>Hotline: Thịnh - 0787353440</li>
-                <li>Website: minhthienlogistics.net</li>
-                <li>Address: Ho Chi Minh City, Vietnam</li>
+              <h3 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Contact Us</h3>
+              <ul className="space-y-4 text-base">
+                <li className="flex items-start gap-3">
+                  <Headphones className="w-5 h-5 text-[#ea580c] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-white font-medium">Hotline</p>
+                    <p>Thịnh - 0787353440</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Globe className="w-5 h-5 text-[#ea580c] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-white font-medium">Website</p>
+                    <p>minhthienlogistics.net</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-[#ea580c] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-white font-medium">Headquarters</p>
+                    <p>Ho Chi Minh City, Vietnam</p>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
-          <div className="pt-8 border-t border-slate-800 text-center text-sm flex flex-col md:flex-row justify-between items-center gap-4">
-            <p>© 2023 Minh Thien Logistics. All rights reserved.</p>
-            <div className="flex gap-4">
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+          
+          <div className="pt-8 border-t border-slate-800/50 text-center md:text-left text-sm flex flex-col md:flex-row justify-between items-center gap-4">
+            <p>© 2023 Minh Thiện Logistics. All rights reserved.</p>
+            <div className="flex gap-6 font-medium">
+              <a href="#faq" className="hover:text-white transition-colors">Terms & Conditions</a>
+              <a href="#faq" className="hover:text-white transition-colors">Privacy Policy</a>
             </div>
           </div>
         </div>
