@@ -913,7 +913,7 @@
                     <MapPin className="w-5 h-5 text-[#ea580c] shrink-0 mt-0.5" />
                     <div>
                       <p className="text-white font-medium">Headquarters</p>
-                      <p>Ho Chi Minh City, Vietnam</p>
+                      <p>124/59 Xom Dat Street, Ward 8, Tan Binh District, Ho Chi Minh City, Vietnam</p>
                     </div>
                   </li>
                 </ul>
